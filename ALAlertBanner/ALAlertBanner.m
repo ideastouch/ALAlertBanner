@@ -95,8 +95,9 @@ static CFTimeInterval const kRotationDurationIPad = 0.4;
 
 + (CGFloat)navigationBarHeight {
     //if we're on iOS7 or later, return new landscape navBar height
-    if (AL_IOS_7_OR_GREATER && UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
-        return kNavigationBarHeightiOS7Landscape;
+    //TODO: GH, need to be fixed fo landscape mod
+//    if (AL_IOS_7_OR_GREATER && UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
+//        return kNavigationBarHeightiOS7Landscape;
     
     return kNavigationBarHeightDefault;
 }
@@ -309,7 +310,7 @@ static CFTimeInterval const kRotationDurationIPad = 0.4;
     if (![view isKindOfClass:[UIWindow class]] && position == ALAlertBannerPositionUnderNavBar)
         [[NSException exceptionWithName:@"Wrong ALAlertBannerStyle For View Type" reason:@"ALAlertBannerPositionUnderNavBar should only be used if you are presenting the alert banner on the AppDelegate window. Use ALAlertBannerPositionTop or ALAlertBannerPositionBottom for normal UIViews" userInfo:nil] raise];
     
-    alertBanner.titleLabel.text = !title ? @" " : title;
+    alertBanner.titleLabel.text = title;
     alertBanner.subtitleLabel.text = subtitle;
     alertBanner.style = style;
     alertBanner.position = position;
@@ -522,7 +523,7 @@ static CFTimeInterval const kRotationDurationIPad = 0.4;
     CGSize maxLabelSize = CGSizeMake(superview.bounds.size.width - (kMargin*3) - self.styleImageView.image.size.width, CGFLOAT_MAX);
     CGFloat titleLabelHeight = AL_SINGLELINE_TEXT_HEIGHT(self.titleLabel.text, self.titleLabel.font);
     CGFloat subtitleLabelHeight = AL_MULTILINE_TEXT_HEIGHT(self.subtitleLabel.text, self.subtitleLabel.font, maxLabelSize, self.subtitleLabel.lineBreakMode);
-    CGFloat heightForSelf = titleLabelHeight + subtitleLabelHeight + (self.subtitleLabel.text == nil || self.titleLabel.text == nil ? kMargin*2 : kMargin*2.5) + (self.position == ALAlertBannerPositionTop ? kStatusBarHeight*0.5 : 0);
+    CGFloat heightForSelf = titleLabelHeight + subtitleLabelHeight + (self.subtitleLabel.text == nil || self.titleLabel.text == nil ? kMargin*2 : kMargin*2.5) + (self.position == ALAlertBannerPositionTop ? kMargin*0.5 : 0);
     
     CGRect frame = CGRectMake(0.f, 0.f, superview.bounds.size.width, heightForSelf);
     CGFloat initialYCoord = 0.f;
@@ -561,7 +562,7 @@ static CFTimeInterval const kRotationDurationIPad = 0.4;
     CGSize maxLabelSize = CGSizeMake(self.superview.bounds.size.width - (kMargin*3.f) - self.styleImageView.image.size.width, CGFLOAT_MAX);
     CGFloat titleLabelHeight = AL_SINGLELINE_TEXT_HEIGHT(self.titleLabel.text, self.titleLabel.font);
     CGFloat subtitleLabelHeight = AL_MULTILINE_TEXT_HEIGHT(self.subtitleLabel.text, self.subtitleLabel.font, maxLabelSize, self.subtitleLabel.lineBreakMode);
-    CGFloat heightForSelf = titleLabelHeight + subtitleLabelHeight + (self.subtitleLabel.text == nil || self.titleLabel.text == nil ? kMargin*2.f : kMargin*2.5f) + (self.position == ALAlertBannerPositionTop ? kStatusBarHeight*0.5 : 0);
+    CGFloat heightForSelf = titleLabelHeight + subtitleLabelHeight + (self.subtitleLabel.text == nil || self.titleLabel.text == nil ? kMargin*2.f : kMargin*2.5f) + (self.position == ALAlertBannerPositionTop ? kMargin*0.5 : 0);
     
     CFTimeInterval boundsAnimationDuration = AL_DEVICE_ANIMATION_DURATION;
         
@@ -584,18 +585,19 @@ static CFTimeInterval const kRotationDurationIPad = 0.4;
     }
     
     CGFloat styleImageViewOrigin = (self.position == ALAlertBannerPositionTop)?
-    (self.frame.size.height - kStatusBarHeight*0.5)/2.f + kStatusBarHeight*0.5 : self.frame.size.height/2.f;
+    (self.frame.size.height - kStatusBarHeight)/2.f + kStatusBarHeight : self.frame.size.height/2.f;
     self.styleImageView.frame = CGRectMake(kMargin,
                                            styleImageViewOrigin - (self.styleImageView.image.size.height/2.f),
                                            self.styleImageView.image.size.width,
                                            self.styleImageView.image.size.height);
     
     CGFloat titleDeltaToTop = (self.position == ALAlertBannerPositionTop)?kStatusBarHeight:kMargin;
-    CGFloat subtitleDeltaToTop = (self.titleLabel.text == nil)?
-    (self.position == ALAlertBannerPositionTop)? kStatusBarHeight : 0
-    : kMargin/2.f;
     self.titleLabel.frame = CGRectMake(self.styleImageView.frame.origin.x + self.styleImageView.frame.size.width + kMargin, titleDeltaToTop, maxLabelSize.width, titleLabelHeight);
-    self.subtitleLabel.frame = CGRectMake(self.titleLabel.frame.origin.x, self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height + subtitleDeltaToTop, maxLabelSize.width, subtitleLabelHeight);
+    
+    CGFloat subtitleDeltaToTop = (self.titleLabel.text == nil)?
+    (self.position == ALAlertBannerPositionTop)? kStatusBarHeight : kMargin/2.f
+    :self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height;
+    self.subtitleLabel.frame = CGRectMake(self.titleLabel.frame.origin.x, subtitleDeltaToTop, maxLabelSize.width, subtitleLabelHeight);
     
     if (animated) {
         [UIView commitAnimations];
