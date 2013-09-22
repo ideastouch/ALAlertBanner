@@ -39,8 +39,8 @@ static NSString * const kShowAlertBannerKey = @"showAlertBannerKey";
 static NSString * const kHideAlertBannerKey = @"hideAlertBannerKey";
 static NSString * const kMoveAlertBannerKey = @"moveAlertBannerKey";
 
-static CGFloat const kMargin = 10.f;
-static CGFloat const kNavigationBarHeightDefault = 44.f;
+static CGFloat const kMargin = 0;//10.f;
+static CGFloat const kNavigationBarHeightDefault = 0;//44.f;
 static CGFloat const kNavigationBarHeightiOS7Landscape = 32.f;
 
 static CFTimeInterval const kRotationDurationIphone = 0.3;
