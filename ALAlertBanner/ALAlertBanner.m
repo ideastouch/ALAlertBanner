@@ -618,7 +618,9 @@ static CFTimeInterval const kRotationDurationIPad = 0.4;
     }
 }
 
-- (void)updatePositionAfterRotationWithY:(CGFloat)yPos animated:(BOOL)animated {    
+- (void)updatePositionAfterRotationWithY:(CGFloat)yPos animated:(BOOL)animated {
+    //TODO: GH, avoided rotation till we can choose when to use or not it.
+    return;
     CFTimeInterval positionAnimationDuration = kRotationDurationIphone; 
 
     BOOL isAnimating = self.isAnimating;
